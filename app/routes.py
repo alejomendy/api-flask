@@ -1,19 +1,34 @@
 from flask import  render_template, Blueprint,request, redirect, url_for, flash,jsonify
 from app import app, db
 from app.models import Equipo, Modelo, Marca, Fabricante, Caracteristica, Stock, Proveedor, Accesorio
-from .schemas import EquipoSchema
+from .schemas import EquipoSchema, ModeloSchema, MarcaSchema, FabricanteSchema, CaracteristicaSchema,StockSchema , ProveedorSchema, AccesorioSchema
 app = Blueprint('app', __name__)
 
 equipo_schema = EquipoSchema()
 equipos_schema = EquipoSchema(many=True)
+modelo_schema = ModeloSchema()
+modelos_schema = ModeloSchema(many=True)
+marcas_schema = MarcaSchema()
+marcas_schema = MarcaSchema(many=True)
+fabricantes_schema =FabricanteSchema()
+fabricantes_schema = FabricanteSchema(many=True)
+caracteristicas_schema =CaracteristicaSchema()
+caracteristicas_schema = CaracteristicaSchema(many=True)
+stock_schema =StockSchema()
+stock_schema = StockSchema(many=True)
+Proveedor_schema =ProveedorSchema()
+proveedor_schema = ProveedorSchema(many=True)
+accesorio_schema =AccesorioSchema()
+accesorio_schema = AccesorioSchema(many=True)
 
-# @app.route('/test', methods=['GET'])
-# def test():
-#     data = {
-#         "message": "Bienvenido a la API",
-#         "status": "success"
-#     }
-#     return jsonify(data)
+
+@app.route('/test', methods=['GET'])
+def test():
+    data = {
+        "message": "Bienvenido a la API",
+        "status": "success"
+    }
+    return jsonify(data)
 
 @app.route('/api/test', methods=['GET'])
 def home():
@@ -23,42 +38,42 @@ def home():
 @app.route('/api/equipos', methods=['GET'])
 def list_equipos():
     equipos = Equipo.query.all()
-    return equipos_schema.jsonify(equipos)
+    return jsonify(equipos_schema.dump(equipos))
 
 @app.route('/api/modelos', methods=['GET'])
 def list_modelos():
     modelos = Modelo.query.all()
-    return jsonify([modelo.to_dict() for modelo in modelos])
+    return jsonify(modelos_schema.dump(modelos))
 
 @app.route('/api/marcas', methods=['GET'])
 def list_marcas():
     marcas = Marca.query.all()
-    return jsonify([marca.to_dict() for marca in marcas])
+    return jsonify(marcas_schema.dump(marcas))
 
 @app.route('/api/fabricantes', methods=['GET'])
 def list_fabricantes():
     fabricantes = Fabricante.query.all()
-    return jsonify([fabricante.to_dict() for fabricante in fabricantes])
+    return jsonify(fabricantes_schema.dump(fabricantes))
 
 @app.route('/api/caracteristicas', methods=['GET'])
 def list_caracteristicas():
     caracteristicas = Caracteristica.query.all()
-    return jsonify([caracteristica.to_dict() for caracteristica in caracteristicas])
+    return jsonify(caracteristicas_schema.dump(caracteristicas))
 
 @app.route('/api/stock', methods=['GET'])
 def list_stock():
-    stock_items = Stock.query.all()
-    return jsonify([stock.to_dict() for stock in stock_items])
+    stock = Stock.query.all()
+    return jsonify(stock_schema.dump(stock))
 
 @app.route('/api/proveedores', methods=['GET'])
 def list_proveedores():
     proveedores = Proveedor.query.all()
-    return jsonify([proveedor.to_dict() for proveedor in proveedores])
+    return jsonify(proveedor_schema.dump(proveedores))
 
 @app.route('/api/accesorios', methods=['GET'])
 def list_accesorios():
     accesorios = Accesorio.query.all()
-    return jsonify([accesorio.to_dict() for accesorio in accesorios])
+    return jsonify(accesorio_schema.dump(accesorios))
 
 
 

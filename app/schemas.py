@@ -1,5 +1,5 @@
 from flask_marshmallow import Marshmallow
-from .models import Equipo, Marca, Fabricante
+
 from marshmallow import Schema, fields
 
 ma = Marshmallow()

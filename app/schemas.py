@@ -54,5 +54,6 @@ class AccesorioSchema(Schema):
 class UsuarioSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True)
+    email = fields.Str(requuired=True)
     password = fields.Str(load_only=True, required=True)
-    role = fields.Str(dump_only=True)
+    rol = fields.Str(dump_only=True)

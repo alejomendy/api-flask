@@ -11,7 +11,7 @@ jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
-   
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5000"], "methods": ["GET", "POST", "PUT", "DELETE"]}})
 
     # Configuración
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'

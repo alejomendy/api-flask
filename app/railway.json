@@ -1,4 +1,10 @@
 {
-    "start": "python run.py"
+    "build": {
+      "env": {
+        "FLASK_ENV": "production"
+      }
+    },
+    "start": {
+      "command": "gunicorn run:app --bind 0.0.0.0:$PORT"
+    }
   }
-  

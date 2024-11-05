@@ -228,15 +228,14 @@ def edit_accesorio_view(id):
 @api_bp.route('/usuarios/<int:id>', methods=['PUT', 'GET'])
 def edit_usuario_view(id):
     if request.method == 'GET':
-       
         usuario = Usuario.query.get(id)  
         if usuario is None:
             return {"error": "Usuario no encontrado"}, 404  
-        return usuarios_schema.dump(usuario)  
-
+        return usuarios_schema.dump(usuario, many=False), 200
     elif request.method == 'PUT':
-        
         return update_object(Usuario, usuarios_schema, id)
+
+
 
 
 

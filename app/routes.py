@@ -221,6 +221,11 @@ def edit_proveedor_view(id):
 def edit_accesorio_view(id):
     return update_object(Accesorio, accesorio_schema, id)
 
+@api_bp.route('/usuarios/<int:id>', methods=['PUT'])
+def edit_usuario_view(id):
+    return update_object(Usuario, usuarios_schema, id)
+
+
 
 # RUTAS PARA USUARIOS
 

@@ -188,6 +188,10 @@ def delete_proveedor(id):
 def delete_accesorio(id):
     return delete_object(Accesorio, id)
 
+@api_bp.route('/usuarios/<int:id>', methods=['DELETE'])
+def delete_usuario(id):
+    return delete_usuario(Usuario, id)
+
 # Rutas para edición
 @api_bp.route('/equipos/<int:id>', methods=['PUT'])
 def edit_equipo_view(id):

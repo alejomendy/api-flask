@@ -1,34 +1,59 @@
-from flask import   Blueprint,request,jsonify
-from app import app, db
+from flask import Blueprint, request, jsonify
+from app import db
 from app.models import Equipo, Modelo, Marca, Fabricante, Caracteristica, Stock, Proveedor, Accesorio, Usuario
-from .schemas import EquipoSchema, ModeloSchema, MarcaSchema, FabricanteSchema, CaracteristicaSchema,StockSchema , ProveedorSchema, AccesorioSchema,UsuarioSchema
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from .schemas import EquipoSchema, ModeloSchema, MarcaSchema, FabricanteSchema, CaracteristicaSchema, StockSchema, ProveedorSchema, AccesorioSchema, UsuarioSchema
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
+api_bp = Blueprint('api', __name__)
 
-app = Blueprint('app', __name__)
-app.config['JWT_SECRET_KEY'] = 'super-secret' # clave
-jwt = JWTManager(app)
+# Configuración JWT
+# app.config['JWT_SECRET_KEY'] = 'super-secret'  # clave
+# jwt = JWTManager(app)
 
+# Schemas
 equipo_schema = EquipoSchema()
 equipos_schema = EquipoSchema(many=True)
 modelo_schema = ModeloSchema()
 modelos_schema = ModeloSchema(many=True)
-marcas_schema = MarcaSchema()
+marca_schema = MarcaSchema()
 marcas_schema = MarcaSchema(many=True)
-fabricantes_schema =FabricanteSchema()
+fabricante_schema = FabricanteSchema()
 fabricantes_schema = FabricanteSchema(many=True)
-caracteristicas_schema =CaracteristicaSchema()
+caracteristica_schema = CaracteristicaSchema()
 caracteristicas_schema = CaracteristicaSchema(many=True)
-stock_schema =StockSchema()
-stock_schema = StockSchema(many=True)
-Proveedor_schema =ProveedorSchema()
-proveedor_schema = ProveedorSchema(many=True)
-accesorio_schema =AccesorioSchema()
-accesorio_schema = AccesorioSchema(many=True)
-usuario_schema =UsuarioSchema()
-usuario_schema = UsuarioSchema(many=True)
+stock_schema = StockSchema()
+stocks_schema = StockSchema(many=True)
+proveedor_schema = ProveedorSchema()
+proveedores_schema = ProveedorSchema(many=True)
+accesorio_schema = AccesorioSchema()
+accesorios_schema = AccesorioSchema(many=True)
+usuario_schema = UsuarioSchema()
+usuarios_schema = UsuarioSchema(many=True)
 
 
-@app.route('/test', methods=['GET'])
+
+def create_object(model, schema):
+    data = request.get_json()
+    new_object = model(**data)
+    db.session.add(new_object)
+    db.session.commit()
+    return jsonify(schema.dump(new_object)), 201
+
+def delete_object(model, id):
+    obj = model.query.get_or_404(id)
+    db.session.delete(obj)
+    db.session.commit()
+    return jsonify({"message": f"{model.__name__} eliminado con éxito"}), 204
+
+def update_object(model, schema, id):
+    obj = model.query.get_or_404(id)
+    data = request.get_json()
+    for key, value in data.items():
+        setattr(obj, key, value)
+    db.session.commit()
+    return jsonify(schema.dump(obj)), 200
+
+
+@api_bp.route('/test', methods=['GET'])
 def test():
     data = {
         "message": "Bienvenido a la API",
@@ -36,256 +61,170 @@ def test():
     }
     return jsonify(data)
 
-@app.route('/api/test', methods=['GET'])
+
+@api_bp.route('/api/test', methods=['GET'])
 def home():
     return jsonify({"message": "Bienvenido a la API", "status": "success"})
 
 
-@app.route('/api/equipos', methods=['GET'])
+@api_bp.route('/equipos', methods=['GET'])
 def list_equipos():
     equipos = Equipo.query.all()
     return jsonify(equipos_schema.dump(equipos))
 
-@app.route('/api/modelos', methods=['GET'])
+
+@api_bp.route('/api/modelos', methods=['GET'])
 def list_modelos():
     modelos = Modelo.query.all()
     return jsonify(modelos_schema.dump(modelos))
 
-@app.route('/api/marcas', methods=['GET'])
+
+@api_bp.route('/api/marcas', methods=['GET'])
 def list_marcas():
     marcas = Marca.query.all()
     return jsonify(marcas_schema.dump(marcas))
 
-@app.route('/api/fabricantes', methods=['GET'])
+
+@api_bp.route('/api/fabricantes', methods=['GET'])
 def list_fabricantes():
     fabricantes = Fabricante.query.all()
     return jsonify(fabricantes_schema.dump(fabricantes))
 
-@app.route('/api/caracteristicas', methods=['GET'])
+
+@api_bp.route('/api/caracteristicas', methods=['GET'])
 def list_caracteristicas():
     caracteristicas = Caracteristica.query.all()
     return jsonify(caracteristicas_schema.dump(caracteristicas))
 
-@app.route('/api/stock', methods=['GET'])
+
+@api_bp.route('/api/stock', methods=['GET'])
 def list_stock():
     stock = Stock.query.all()
-    return jsonify(stock_schema.dump(stock))
+    return jsonify(stocks_schema.dump(stock))
 
-@app.route('/api/proveedores', methods=['GET'])
+
+@api_bp.route('/api/proveedores', methods=['GET'])
 def list_proveedores():
     proveedores = Proveedor.query.all()
-    return jsonify(proveedor_schema.dump(proveedores))
+    return jsonify(proveedores_schema.dump(proveedores))
 
-@app.route('/api/accesorios', methods=['GET'])
+
+@api_bp.route('/api/accesorios', methods=['GET'])
 def list_accesorios():
     accesorios = Accesorio.query.all()
-    return jsonify(accesorio_schema.dump(accesorios))
+    return jsonify(accesorios_schema.dump(accesorios))
+
+@api_bp.route('/api/usuarios', methods=['GET'])
+def get_usuarios():
+    usuarios = Usuario.query.all()  # Obtener todos los usuarios
+    usuarios_schema = UsuarioSchema(many=True)  # Serializar los usuarios
+    return jsonify(usuarios_schema.dump(usuarios)), 200
 
 
 
-#RUTAS PARA LA CREACION
-
-@app.route('/api/equipos', methods=['POST'])
+# Rutas para creación
+@api_bp.route('/api/equipos', methods=['POST'])
 def create_equipo():
-    data = request.get_json()
-    nuevo_equipo = Equipo(**data)
-    db.session.add(nuevo_equipo)
-    db.session.commit()
-    return jsonify(nuevo_equipo.to_dict()), 201
+    return create_object(Equipo, equipo_schema)
 
-@app.route('/api/modelos', methods=['POST'])
+@api_bp.route('/api/modelos', methods=['POST'])
 def create_modelo():
-    data = request.get_json()
-    nuevo_modelo = Modelo(**data)
-    db.session.add(nuevo_modelo)
-    db.session.commit()
-    return jsonify(nuevo_modelo.to_dict()), 201
+    return create_object(Modelo, modelo_schema)
 
-@app.route('/api/marcas', methods=['POST'])
+@api_bp.route('/api/marcas', methods=['POST'])
 def create_marca():
-    data = request.get_json()
-    nueva_marca = Marca(**data)
-    db.session.add(nueva_marca)
-    db.session.commit()
-    return jsonify(nueva_marca.to_dict()), 201
+    return create_object(Marca, marca_schema)
 
-@app.route('/api/fabricantes', methods=['POST'])
+@api_bp.route('/api/fabricantes', methods=['POST'])
 def create_fabricante():
-    data = request.get_json()
-    nuevo_fabricante = Fabricante(**data)
-    db.session.add(nuevo_fabricante)
-    db.session.commit()
-    return jsonify(nuevo_fabricante.to_dict()), 201
+    return create_object(Fabricante, fabricante_schema)
 
-@app.route('/api/caracteristicas', methods=['POST'])
+@api_bp.route('/api/caracteristicas', methods=['POST'])
 def create_caracteristica():
-    data = request.get_json()
-    nueva_caracteristica = Caracteristica(**data)
-    db.session.add(nueva_caracteristica)
-    db.session.commit()
-    return jsonify(nueva_caracteristica.to_dict()), 201
+    return create_object(Caracteristica, caracteristica_schema)
 
-@app.route('/api/stock', methods=['POST'])
+@api_bp.route('/api/stock', methods=['POST'])
 def create_stock():
-    data = request.get_json()
-    nuevo_stock = Stock(**data)
-    db.session.add(nuevo_stock)
-    db.session.commit()
-    return jsonify(nuevo_stock.to_dict()), 201
+    return create_object(Stock, stock_schema)
 
-@app.route('/api/proveedores', methods=['POST'])
+@api_bp.route('/api/proveedores', methods=['POST'])
 def create_proveedor():
-    data = request.get_json()
-    nuevo_proveedor = Proveedor(**data)
-    db.session.add(nuevo_proveedor)
-    db.session.commit()
-    return jsonify(nuevo_proveedor.to_dict()), 201
+    return create_object(Proveedor, proveedor_schema)
 
-@app.route('/api/accesorios', methods=['POST'])
+@api_bp.route('/api/accesorios', methods=['POST'])
 def create_accesorio():
-    data = request.get_json()
-    nuevo_accesorio = Accesorio(**data)
-    db.session.add(nuevo_accesorio)
-    db.session.commit()
-    return jsonify(nuevo_accesorio.to_dict()), 201
+    return create_object(Accesorio, accesorio_schema)
 
-
-#RUTAS PARA ELIMINAR
-
-@app.route('/api/equipos/<int:id>', methods=['DELETE'])
+# Rutas para eliminación
+@api_bp.route('/api/equipos/<int:id>', methods=['DELETE'])
 def delete_equipo(id):
-    equipo = Equipo.query.get_or_404(id)
-    db.session.delete(equipo)
-    db.session.commit()
-    return jsonify({"message": "Equipo eliminado con éxito"}), 204
+    return delete_object(Equipo, id)
 
-@app.route('/api/modelos/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/modelos/<int:id>', methods=['DELETE'])
 def delete_modelo(id):
-    modelo = Modelo.query.get_or_404(id)
-    db.session.delete(modelo)
-    db.session.commit()
-    return jsonify({"message": "Modelo eliminado con éxito"}), 204
+    return delete_object(Modelo, id)
 
-@app.route('/api/marcas/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/marcas/<int:id>', methods=['DELETE'])
 def delete_marca(id):
-    marca = Marca.query.get_or_404(id)
-    db.session.delete(marca)
-    db.session.commit()
-    return jsonify({"message": "Marca eliminada con éxito"}), 204
+    return delete_object(Marca, id)
 
-@app.route('/api/fabricantes/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/fabricantes/<int:id>', methods=['DELETE'])
 def delete_fabricante(id):
-    fabricante = Fabricante.query.get_or_404(id)
-    db.session.delete(fabricante)
-    db.session.commit()
-    return jsonify({"message": "Fabricante eliminado con éxito"}), 204
+    return delete_object(Fabricante, id)
 
-@app.route('/api/caracteristicas/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/caracteristicas/<int:id>', methods=['DELETE'])
 def delete_caracteristica(id):
-    caracteristica = Caracteristica.query.get_or_404(id)
-    db.session.delete(caracteristica)
-    db.session.commit()
-    return jsonify({"message": "Característica eliminada con éxito"}), 204
+    return delete_object(Caracteristica, id)
 
-@app.route('/api/stock/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/stock/<int:id>', methods=['DELETE'])
 def delete_stock(id):
-    stock = Stock.query.get_or_404(id)
-    db.session.delete(stock)
-    db.session.commit()
-    return jsonify({"message": "Stock eliminado con éxito"}), 204
+    return delete_object(Stock, id)
 
-@app.route('/api/proveedores/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/proveedores/<int:id>', methods=['DELETE'])
 def delete_proveedor(id):
-    proveedor = Proveedor.query.get_or_404(id)
-    db.session.delete(proveedor)
-    db.session.commit()
-    return jsonify({"message": "Proveedor eliminado con éxito"}), 204
+    return delete_object(Proveedor, id)
 
-@app.route('/api/accesorios/<int:id>', methods=['DELETE'])
+@api_bp.route('/api/accesorios/<int:id>', methods=['DELETE'])
 def delete_accesorio(id):
-    accesorio = Accesorio.query.get_or_404(id)
-    db.session.delete(accesorio)
-    db.session.commit()
-    return jsonify({"message": "Accesorio eliminado con éxito"}), 204
+    return delete_object(Accesorio, id)
 
-#RUTAS PARA LA EDICION
-
-@app.route('/api/equipos/<int:id>', methods=['PUT'])
+# Rutas para edición
+@api_bp.route('/api/equipos/<int:id>', methods=['PUT'])
 def edit_equipo_view(id):
-    equipo = Equipo.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(equipo, key, value)
-    db.session.commit()
-    return jsonify(equipo.to_dict()), 200
+    return update_object(Equipo, equipo_schema, id)
 
-@app.route('/api/modelos/<int:id>', methods=['PUT'])
+@api_bp.route('/api/modelos/<int:id>', methods=['PUT'])
 def edit_modelo_view(id):
-    modelo = Modelo.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(modelo, key, value)
-    db.session.commit()
-    return jsonify(modelo.to_dict()), 200
+    return update_object(Modelo, modelo_schema, id)
 
-@app.route('/api/marcas/<int:id>', methods=['PUT'])
+@api_bp.route('/api/marcas/<int:id>', methods=['PUT'])
 def edit_marca_view(id):
-    marca = Marca.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(marca, key, value)
-    db.session.commit()
-    return jsonify(marca.to_dict()), 200
+    return update_object(Marca, marca_schema, id)
 
-@app.route('/api/fabricantes/<int:id>', methods=['PUT'])
+@api_bp.route('/api/fabricantes/<int:id>', methods=['PUT'])
 def edit_fabricante_view(id):
-    fabricante = Fabricante.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(fabricante, key, value)
-    db.session.commit()
-    return jsonify(fabricante.to_dict()), 200
+    return update_object(Fabricante, fabricante_schema, id)
 
-@app.route('/api/caracteristicas/<int:id>', methods=['PUT'])
+@api_bp.route('/api/caracteristicas/<int:id>', methods=['PUT'])
 def edit_caracteristica_view(id):
-    caracteristica = Caracteristica.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(caracteristica, key, value)
-    db.session.commit()
-    return jsonify(caracteristica.to_dict()), 200
+    return update_object(Caracteristica, caracteristica_schema, id)
 
-@app.route('/api/stock/<int:id>', methods=['PUT'])
+@api_bp.route('/api/stock/<int:id>', methods=['PUT'])
 def edit_stock_view(id):
-    stock = Stock.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(stock, key, value)
-    db.session.commit()
-    return jsonify(stock.to_dict()), 200
+    return update_object(Stock, stock_schema, id)
 
-@app.route('/api/proveedores/<int:id>', methods=['PUT'])
+@api_bp.route('/api/proveedores/<int:id>', methods=['PUT'])
 def edit_proveedor_view(id):
-    proveedor = Proveedor.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(proveedor, key, value)
-    db.session.commit()
-    return jsonify(proveedor.to_dict()), 200
+    return update_object(Proveedor, proveedor_schema, id)
 
-@app.route('/api/accesorios/<int:id>', methods=['PUT'])
+@api_bp.route('/api/accesorios/<int:id>', methods=['PUT'])
 def edit_accesorio_view(id):
-    accesorio = Accesorio.query.get_or_404(id)
-    data = request.get_json()
-    for key, value in data.items():
-        setattr(accesorio, key, value)
-    db.session.commit()
-    return jsonify(accesorio.to_dict()), 200
+    return update_object(Accesorio, accesorio_schema, id)
 
 
-# USUARIOS
+# RUTAS PARA USUARIOS
 
-@app.route('/api/register', methods=['POST'])
+@api_bp.route('/api/register', methods=['POST'])
 def register_user():
     data = request.get_json()
     username = data.get('username')
@@ -294,22 +233,23 @@ def register_user():
     if Usuario.query.filter_by(username=username).first():
         return jsonify({"error": "Usuario ya registrado"}), 400
 
-    nuevo_usuario = Usuario(username=username, role='User')
+    nuevo_usuario = Usuario(username=username, rol='User')  # Cambiado 'role' a 'rol'
     nuevo_usuario.set_password(password)
     db.session.add(nuevo_usuario)
     db.session.commit()
     
     return jsonify({"message": "Usuario creado con éxito"}), 201
 
-@app.route('/api/login', methods=['POST'])
+
+@api_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
     
-    usuario = usuario.query.filter_by(username=username).first()
+    usuario = Usuario.query.filter_by(username=username).first()  # Cambiado 'usuario.query' a 'Usuario.query'
     if not usuario or not usuario.check_password(password):
         return jsonify({"error": "Credenciales inválidas"}), 401
 
-    access_token = create_access_token(identity={"id": usuario.id, "role": usuario.role})
-    return jsonify(access_token=access_token)
+    access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol})  # Cambiado 'role' a 'rol'
+    return jsonify(access_token=access_token), 200

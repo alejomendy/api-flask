@@ -50,3 +50,9 @@ class AccesorioSchema(Schema):
     tipo = fields.Str(required=True)
     compatible_con_modelos = fields.Str(allow_none=True)  
     proveedor_id = fields.Int(required=True)
+
+class UsuarioSchema(Schema):
+    id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
+    password = fields.Str(load_only=True, required=True)
+    role = fields.Str(dump_only=True)

@@ -1,8 +1,12 @@
-from flask import  render_template, Blueprint,request, redirect, url_for, flash,jsonify
+from flask import   Blueprint,request,jsonify
 from app import app, db
-from app.models import Equipo, Modelo, Marca, Fabricante, Caracteristica, Stock, Proveedor, Accesorio
-from .schemas import EquipoSchema, ModeloSchema, MarcaSchema, FabricanteSchema, CaracteristicaSchema,StockSchema , ProveedorSchema, AccesorioSchema
+from app.models import Equipo, Modelo, Marca, Fabricante, Caracteristica, Stock, Proveedor, Accesorio, Usuario
+from .schemas import EquipoSchema, ModeloSchema, MarcaSchema, FabricanteSchema, CaracteristicaSchema,StockSchema , ProveedorSchema, AccesorioSchema,UsuarioSchema
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
 app = Blueprint('app', __name__)
+app.config['JWT_SECRET_KEY'] = 'super-secret' # clave
+jwt = JWTManager(app)
 
 equipo_schema = EquipoSchema()
 equipos_schema = EquipoSchema(many=True)
@@ -20,6 +24,8 @@ Proveedor_schema =ProveedorSchema()
 proveedor_schema = ProveedorSchema(many=True)
 accesorio_schema =AccesorioSchema()
 accesorio_schema = AccesorioSchema(many=True)
+usuario_schema =UsuarioSchema()
+usuario_schema = UsuarioSchema(many=True)
 
 
 @app.route('/test', methods=['GET'])
@@ -275,3 +281,35 @@ def edit_accesorio_view(id):
         setattr(accesorio, key, value)
     db.session.commit()
     return jsonify(accesorio.to_dict()), 200
+
+
+# USUARIOS
+
+@app.route('/api/register', methods=['POST'])
+def register_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    if Usuario.query.filter_by(username=username).first():
+        return jsonify({"error": "Usuario ya registrado"}), 400
+
+    nuevo_usuario = Usuario(username=username, role='User')
+    nuevo_usuario.set_password(password)
+    db.session.add(nuevo_usuario)
+    db.session.commit()
+    
+    return jsonify({"message": "Usuario creado con éxito"}), 201
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    usuario = usuario.query.filter_by(username=username).first()
+    if not usuario or not usuario.check_password(password):
+        return jsonify({"error": "Credenciales inválidas"}), 401
+
+    access_token = create_access_token(identity={"id": usuario.id, "role": usuario.role})
+    return jsonify(access_token=access_token)

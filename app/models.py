@@ -1,5 +1,7 @@
 from . import db
-
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+db = SQLAlchemy()
 
 class Marca(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,3 +79,15 @@ class Accesorio(db.Model):
 
     # Relación con Proveedor
     proveedor_id = db.Column(db.Integer, db.ForeignKey('proveedor.id'), nullable=False)
+
+class Usuario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    rol = db.Column(db.String(50), nullable=False, default='User')  
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)

@@ -228,8 +228,8 @@ def edit_accesorio_view(id):
 def register_user():
     data = request.get_json()
     username = data.get('username')
-    email = data.get('email')
     password = data.get('password')
+    
     
     if Usuario.query.filter_by(username=username).first():
         return jsonify({"error": "Usuario ya registrado"}), 400

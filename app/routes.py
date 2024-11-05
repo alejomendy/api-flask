@@ -234,7 +234,7 @@ def register_user():
     if Usuario.query.filter_by(username=username).first():
         return jsonify({"error": "Usuario ya registrado"}), 400
 
-    nuevo_usuario = Usuario(username=username, rol='User')  # Cambiado 'role' a 'rol'
+    nuevo_usuario = Usuario(username=username, rol='User')  
     nuevo_usuario.set_password(password)
     db.session.add(nuevo_usuario)
     db.session.commit()
@@ -248,9 +248,9 @@ def login():
     username = data.get('username')
     password = data.get('password')
     
-    usuario = Usuario.query.filter_by(username=username).first()  # Cambiado 'usuario.query' a 'Usuario.query'
+    usuario = Usuario.query.filter_by(username=username).first()  
     if not usuario or not usuario.check_password(password):
         return jsonify({"error": "Credenciales inválidas"}), 401
 
-    access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol})  # Cambiado 'role' a 'rol'
+    access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol}) 
     return jsonify(access_token=access_token), 200

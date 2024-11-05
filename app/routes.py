@@ -224,7 +224,7 @@ def edit_accesorio_view(id):
 
 # RUTAS PARA USUARIOS
 
-@api_bp.route('/api/register', methods=['POST'])
+@api_bp.route('/register', methods=['POST'])
 def register_user():
     data = request.get_json()
     username = data.get('username')
@@ -242,7 +242,7 @@ def register_user():
     return jsonify({"message": "Usuario creado con éxito"}), 201
 
 
-@api_bp.route('/api/login', methods=['POST'])
+@api_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')

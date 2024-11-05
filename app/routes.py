@@ -116,8 +116,8 @@ def list_accesorios():
 
 @api_bp.route('/usuarios', methods=['GET'])
 def get_usuarios():
-    usuarios = Usuario.query.all()  # Obtener todos los usuarios
-    usuarios_schema = UsuarioSchema(many=True)  # Serializar los usuarios
+    usuarios = Usuario.query.all()  
+    usuarios_schema = UsuarioSchema(many=True)  
     return jsonify(usuarios_schema.dump(usuarios)), 200
 
 
@@ -225,9 +225,18 @@ def edit_proveedor_view(id):
 def edit_accesorio_view(id):
     return update_object(Accesorio, accesorio_schema, id)
 
-@api_bp.route('/usuarios/<int:id>', methods=['PUT'])
+@api_bp.route('/usuarios/<int:id>', methods=['PUT', 'GET'])
 def edit_usuario_view(id):
-    return update_object(Usuario, usuarios_schema, id)
+    if request.method == 'GET':
+       
+        usuario = Usuario.query.get(id)  
+        if usuario is None:
+            return {"error": "Usuario no encontrado"}, 404  
+        return usuarios_schema.dump(usuario)  
+
+    elif request.method == 'PUT':
+        
+        return update_object(Usuario, usuarios_schema, id)
 
 
 

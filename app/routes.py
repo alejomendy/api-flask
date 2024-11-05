@@ -73,48 +73,48 @@ def list_equipos():
     return jsonify(equipos_schema.dump(equipos))
 
 
-@api_bp.route('/api/modelos', methods=['GET'])
+@api_bp.route('/modelos', methods=['GET'])
 def list_modelos():
     modelos = Modelo.query.all()
     return jsonify(modelos_schema.dump(modelos))
 
 
-@api_bp.route('/api/marcas', methods=['GET'])
+@api_bp.route('/marcas', methods=['GET'])
 def list_marcas():
     marcas = Marca.query.all()
     return jsonify(marcas_schema.dump(marcas))
 
 
-@api_bp.route('/api/fabricantes', methods=['GET'])
+@api_bp.route('/fabricantes', methods=['GET'])
 def list_fabricantes():
     fabricantes = Fabricante.query.all()
     return jsonify(fabricantes_schema.dump(fabricantes))
 
 
-@api_bp.route('/api/caracteristicas', methods=['GET'])
+@api_bp.route('/caracteristicas', methods=['GET'])
 def list_caracteristicas():
     caracteristicas = Caracteristica.query.all()
     return jsonify(caracteristicas_schema.dump(caracteristicas))
 
 
-@api_bp.route('/api/stock', methods=['GET'])
+@api_bp.route('/stock', methods=['GET'])
 def list_stock():
     stock = Stock.query.all()
     return jsonify(stocks_schema.dump(stock))
 
 
-@api_bp.route('/api/proveedores', methods=['GET'])
+@api_bp.route('/proveedores', methods=['GET'])
 def list_proveedores():
     proveedores = Proveedor.query.all()
     return jsonify(proveedores_schema.dump(proveedores))
 
 
-@api_bp.route('/api/accesorios', methods=['GET'])
+@api_bp.route('/accesorios', methods=['GET'])
 def list_accesorios():
     accesorios = Accesorio.query.all()
     return jsonify(accesorios_schema.dump(accesorios))
 
-@api_bp.route('/api/usuarios', methods=['GET'])
+@api_bp.route('/usuarios', methods=['GET'])
 def get_usuarios():
     usuarios = Usuario.query.all()  # Obtener todos los usuarios
     usuarios_schema = UsuarioSchema(many=True)  # Serializar los usuarios

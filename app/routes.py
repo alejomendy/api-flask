@@ -123,101 +123,101 @@ def get_usuarios():
 
 
 # Rutas para creación
-@api_bp.route('/api/equipos', methods=['POST'])
+@api_bp.route('/equipos', methods=['POST'])
 def create_equipo():
     return create_object(Equipo, equipo_schema)
 
-@api_bp.route('/api/modelos', methods=['POST'])
+@api_bp.route('/modelos', methods=['POST'])
 def create_modelo():
     return create_object(Modelo, modelo_schema)
 
-@api_bp.route('/api/marcas', methods=['POST'])
+@api_bp.route('/marcas', methods=['POST'])
 def create_marca():
     return create_object(Marca, marca_schema)
 
-@api_bp.route('/api/fabricantes', methods=['POST'])
+@api_bp.route('/fabricantes', methods=['POST'])
 def create_fabricante():
     return create_object(Fabricante, fabricante_schema)
 
-@api_bp.route('/api/caracteristicas', methods=['POST'])
+@api_bp.route('/caracteristicas', methods=['POST'])
 def create_caracteristica():
     return create_object(Caracteristica, caracteristica_schema)
 
-@api_bp.route('/api/stock', methods=['POST'])
+@api_bp.route('/stock', methods=['POST'])
 def create_stock():
     return create_object(Stock, stock_schema)
 
-@api_bp.route('/api/proveedores', methods=['POST'])
+@api_bp.route('/proveedores', methods=['POST'])
 def create_proveedor():
     return create_object(Proveedor, proveedor_schema)
 
-@api_bp.route('/api/accesorios', methods=['POST'])
+@api_bp.route('/accesorios', methods=['POST'])
 def create_accesorio():
     return create_object(Accesorio, accesorio_schema)
 
 # Rutas para eliminación
-@api_bp.route('/api/equipos/<int:id>', methods=['DELETE'])
+@api_bp.route('/equipos/<int:id>', methods=['DELETE'])
 def delete_equipo(id):
     return delete_object(Equipo, id)
 
-@api_bp.route('/api/modelos/<int:id>', methods=['DELETE'])
+@api_bp.route('/modelos/<int:id>', methods=['DELETE'])
 def delete_modelo(id):
     return delete_object(Modelo, id)
 
-@api_bp.route('/api/marcas/<int:id>', methods=['DELETE'])
+@api_bp.route('/marcas/<int:id>', methods=['DELETE'])
 def delete_marca(id):
     return delete_object(Marca, id)
 
-@api_bp.route('/api/fabricantes/<int:id>', methods=['DELETE'])
+@api_bp.route('/fabricantes/<int:id>', methods=['DELETE'])
 def delete_fabricante(id):
     return delete_object(Fabricante, id)
 
-@api_bp.route('/api/caracteristicas/<int:id>', methods=['DELETE'])
+@api_bp.route('/caracteristicas/<int:id>', methods=['DELETE'])
 def delete_caracteristica(id):
     return delete_object(Caracteristica, id)
 
-@api_bp.route('/api/stock/<int:id>', methods=['DELETE'])
+@api_bp.route('/stock/<int:id>', methods=['DELETE'])
 def delete_stock(id):
     return delete_object(Stock, id)
 
-@api_bp.route('/api/proveedores/<int:id>', methods=['DELETE'])
+@api_bp.route('/proveedores/<int:id>', methods=['DELETE'])
 def delete_proveedor(id):
     return delete_object(Proveedor, id)
 
-@api_bp.route('/api/accesorios/<int:id>', methods=['DELETE'])
+@api_bp.route('/accesorios/<int:id>', methods=['DELETE'])
 def delete_accesorio(id):
     return delete_object(Accesorio, id)
 
 # Rutas para edición
-@api_bp.route('/api/equipos/<int:id>', methods=['PUT'])
+@api_bp.route('/equipos/<int:id>', methods=['PUT'])
 def edit_equipo_view(id):
     return update_object(Equipo, equipo_schema, id)
 
-@api_bp.route('/api/modelos/<int:id>', methods=['PUT'])
+@api_bp.route('/modelos/<int:id>', methods=['PUT'])
 def edit_modelo_view(id):
     return update_object(Modelo, modelo_schema, id)
 
-@api_bp.route('/api/marcas/<int:id>', methods=['PUT'])
+@api_bp.route('/marcas/<int:id>', methods=['PUT'])
 def edit_marca_view(id):
     return update_object(Marca, marca_schema, id)
 
-@api_bp.route('/api/fabricantes/<int:id>', methods=['PUT'])
+@api_bp.route('/fabricantes/<int:id>', methods=['PUT'])
 def edit_fabricante_view(id):
     return update_object(Fabricante, fabricante_schema, id)
 
-@api_bp.route('/api/caracteristicas/<int:id>', methods=['PUT'])
+@api_bp.route('/caracteristicas/<int:id>', methods=['PUT'])
 def edit_caracteristica_view(id):
     return update_object(Caracteristica, caracteristica_schema, id)
 
-@api_bp.route('/api/stock/<int:id>', methods=['PUT'])
+@api_bp.route('/stock/<int:id>', methods=['PUT'])
 def edit_stock_view(id):
     return update_object(Stock, stock_schema, id)
 
-@api_bp.route('/api/proveedores/<int:id>', methods=['PUT'])
+@api_bp.route('/proveedores/<int:id>', methods=['PUT'])
 def edit_proveedor_view(id):
     return update_object(Proveedor, proveedor_schema, id)
 
-@api_bp.route('/api/accesorios/<int:id>', methods=['PUT'])
+@api_bp.route('/accesorios/<int:id>', methods=['PUT'])
 def edit_accesorio_view(id):
     return update_object(Accesorio, accesorio_schema, id)
 

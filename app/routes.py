@@ -270,7 +270,7 @@ def login():
         return jsonify({"error": "Credenciales inválidas"}), 401
 
     access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol}) 
-    return jsonify(access_token=access_token), 200
+    return jsonify({"access_token": access_token}), 200
 
 @api_bp.route('/api/usuarios/<int:id>', methods=['GET', 'PUT'])
 def handle_user(id):

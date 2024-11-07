@@ -225,20 +225,6 @@ def edit_proveedor_view(id):
 def edit_accesorio_view(id):
     return update_object(Accesorio, accesorio_schema, id)
 
-@api_bp.route('/usuarios/<int:id>', methods=['PUT', 'GET'])
-def edit_usuario_view(id):
-    if request.method == 'GET':
-        usuario = Usuario.query.get(id)  
-        if usuario is None:
-            return {"error": "Usuario no encontrado"}, 404  
-        return usuarios_schema.dump(usuario, many=False), 200
-    elif request.method == 'PUT':
-        return update_object(Usuario, usuarios_schema, id)
-
-
-
-
-
 # RUTAS PARA USUARIOS
 
 @api_bp.route('/register', methods=['POST'])
@@ -271,3 +257,11 @@ def login():
 
     access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol}) 
     return jsonify(access_token=access_token), 200
+
+@app.route('/api/usuarios/<int:id>', methods=['GET', 'PUT'])
+def handle_user(id):
+    if request.method == 'GET':
+        return jsonify({"id": id, "username": "usuario_example"})  
+    elif request.method == 'PUT':
+        data = request.get_json()
+        return jsonify({"message": f"Usuario {id} actualizado exitosamente"}), 200

@@ -272,7 +272,7 @@ def login():
     access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol}) 
     return jsonify(access_token=access_token), 200
 
-@app.route('/api/usuarios/<int:id>', methods=['GET', 'PUT'])
+@api_bp.route('/api/usuarios/<int:id>', methods=['GET', 'PUT'])
 def handle_user(id):
     if request.method == 'GET':
         return jsonify({"id": id, "username": "usuario_example"})  

@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 import os
 from flask_cors import CORS
+
 # Crear instancias sin inicializar
 db = SQLAlchemy()
 migrate = Migrate()

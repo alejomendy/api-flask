@@ -190,7 +190,7 @@ def delete_accesorio(id):
 
 @api_bp.route('/usuarios/<int:id>', methods=['DELETE'])
 def delete_usuario(id):
-    return delete_usuario(Usuario, id)
+    return delete_object(Usuario, id)
 
 # Rutas para edición
 @api_bp.route('/equipos/<int:id>', methods=['PUT'])
@@ -233,8 +233,8 @@ def edit_usuario_view(id):
             return {"error": "Usuario no encontrado"}, 404  
         return usuarios_schema.dump(usuario, many=False), 200
     elif request.method == 'PUT':
-        return update_object(Usuario, usuarios_schema, id)
-
+        update_object(Usuario, usuarios_schema, id)
+        return {"ok": "Usuario actualizado"}, 200  
 
 
 

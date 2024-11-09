@@ -266,16 +266,10 @@ def login():
     password = data.get('password')
     
     usuario = Usuario.query.filter_by(username=username).first()  
-    if not usuario or not usuario.check_password(password):
-        return jsonify({"error": "Credenciales inválidas"}), 401
+    
+    if not usuario or usuario.password != password:
+        return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
 
     access_token = create_access_token(identity={"id": usuario.id, "rol": usuario.rol}) 
+    
     return jsonify({"access_token": access_token}), 200
-
-@api_bp.route('/api/usuarios/<int:id>', methods=['GET', 'PUT'])
-def handle_user(id):
-    if request.method == 'GET':
-        return jsonify({"id": id, "username": "usuario_example"})  
-    elif request.method == 'PUT':
-        data = request.get_json()
-        return jsonify({"message": f"Usuario {id} actualizado exitosamente"}), 200

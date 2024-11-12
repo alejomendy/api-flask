@@ -235,6 +235,58 @@ def edit_usuario_view(id):
     elif request.method == 'PUT':
         update_object(Usuario, usuarios_schema, id)
         return {"ok": "Usuario actualizado"}, 200  
+    
+@api_bp.route('/equipos', methods=['POST'])
+def crear_equipo():
+    try:
+        # Validar y deserializar los datos de entrada
+        data = request.get_json()
+        
+        # Validar los datos usando el schema
+        errors = equipo_schema.validate(data)
+        if errors:
+            return jsonify({
+                'success': False,
+                'errors': errors
+            }), 400
+        
+        # Verificar si el modelo existe
+        modelo = Modelo.query.get(data['modelo_id'])
+        if not modelo:
+            return jsonify({
+                'success': False,
+                'message': 'El modelo especificado no existe'
+            }), 404
+
+        # Crear nuevo equipo
+        nuevo_equipo = Equipo(
+            nombre=data['nombre'],
+            costo=data['costo'],
+            modelo_id=data['modelo_id']
+        )
+
+        # Si se proporciona característica_id
+        if 'caracteristica_id' in data:
+            nuevo_equipo.caracteristica_id = data['caracteristica_id']
+
+        # Guardar en la base de datos
+        db.session.add(nuevo_equipo)
+        db.session.commit()
+
+        # Serializar y devolver la respuesta
+        return jsonify({
+            'success': True,
+            'data': equipo_schema.dump(nuevo_equipo)
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+
 
 
 

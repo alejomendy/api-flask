@@ -62,9 +62,9 @@ class Equipo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     costo = db.Column(db.Float, nullable=False)
-    modelo_id = db.Column(db.Integer, db.ForeignKey('modelo.id'), nullable=False)
+    modelo_id = db.Column(db.Integer, db.ForeignKey('modelo.id'), nullable=True)
     caracteristica_id = db.Column(db.Integer, db.ForeignKey('caracteristica.id'))
-    stock = db.relationship('Stock', backref='equipo', uselist=False)
+    stock = db.relationship('Stock', backref='equipo', uselist=True)
 
     def to_dict(self):
         return {
@@ -141,3 +141,4 @@ class Usuario(db.Model):
         }
     
     
+   

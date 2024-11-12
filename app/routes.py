@@ -5,10 +5,6 @@ from .schemas import EquipoSchema, ModeloSchema, MarcaSchema, FabricanteSchema, 
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 api_bp = Blueprint('api', __name__)
 
-# Configuración JWT
-# app.config['JWT_SECRET_KEY'] = 'super-secret'  # clave
-# jwt = JWTManager(app)
-
 # Schemas
 equipo_schema = EquipoSchema()
 equipos_schema = EquipoSchema(many=True)
@@ -239,41 +235,29 @@ def edit_usuario_view(id):
 @api_bp.route('/equipos', methods=['POST'])
 def crear_equipo():
     try:
-        # Validar y deserializar los datos de entrada
+
         data = request.get_json()
-        
-        # Validar los datos usando el schema
         errors = equipo_schema.validate(data)
         if errors:
             return jsonify({
                 'success': False,
                 'errors': errors
             }), 400
-        
-        # Verificar si el modelo existe
         modelo = Modelo.query.get(data['modelo_id'])
         if not modelo:
             return jsonify({
                 'success': False,
                 'message': 'El modelo especificado no existe'
             }), 404
-
-        # Crear nuevo equipo
         nuevo_equipo = Equipo(
             nombre=data['nombre'],
             costo=data['costo'],
             modelo_id=data['modelo_id']
         )
-
-        # Si se proporciona característica_id
         if 'caracteristica_id' in data:
             nuevo_equipo.caracteristica_id = data['caracteristica_id']
-
-        # Guardar en la base de datos
         db.session.add(nuevo_equipo)
         db.session.commit()
-
-        # Serializar y devolver la respuesta
         return jsonify({
             'success': True,
             'data': equipo_schema.dump(nuevo_equipo)
